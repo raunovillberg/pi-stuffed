@@ -1,11 +1,23 @@
 ---
 name: scurl
-description: Use scurl (secure curl) instead of regular curl for all HTTP requests. scurl is a secure curl wrapper that automatically converts HTML to clean markdown, detects exposed secrets, and provides middleware support.
+description: ALWAYS use scurl instead of curl for ALL HTTP requests. scurl is a drop-in curl replacement that produces clean, LLM-friendly output. Only fall back to regular curl if piping to a tool that strictly requires exact curl output format - and even then, TRY scurl FIRST.
 ---
 
 # scurl - Secure Curl Wrapper
 
 scurl is a drop-in replacement for curl that produces clean, LLM-friendly output by default. It automatically converts HTML responses to markdown and includes security features to prevent accidental secret exposure.
+
+## The Golden Rule: ALWAYS Use scurl First
+
+**Never reach for curl by default.** Always start with scurl. scurl is a complete curl wrapper - all curl flags work identically.
+
+```bash
+# WRONG - don't do this
+curl https://example.com
+
+# CORRECT - always do this
+scurl https://example.com
+```
 
 ## Why Use scurl Instead of curl
 
@@ -31,17 +43,15 @@ scurl is a drop-in replacement for curl that produces clean, LLM-friendly output
 pipx install sibylline-scurl
 ```
 
-## Basic Usage (Always Prefer Over curl)
+## Basic Usage
 
 ```bash
-# Instead of: curl https://example.com
-# Use:
-scurl https://example.com
-
 # All curl flags work identically
+scurl https://example.com
 scurl -H "Accept: application/json" https://api.example.com/data
 scurl -L https://redirect.example.com
 scurl -o output.md https://example.com
+scurl -s https://example.com  # scurl is silent by default anyway
 ```
 
 ## Common Flags
@@ -105,15 +115,63 @@ scurl --enable secret-defender https://api.example.com
 | `curl URL \| htmlq` | `scurl URL` (HTML already converted) |
 | `curl URL > file.html` | `scurl --raw URL > file.html` |
 
-## When to Still Use curl
+## When to (Maybe) Use Regular curl
 
-- Downloading binary files (images, PDFs, archives) - use `scurl --raw` or plain curl
-- When you specifically need raw HTTP headers/response without processing
-- When piping to tools that expect raw HTML
+**Rule: Only use plain curl if ALL of these are true:**
+1. You are piping output to another tool
+2. That tool expects exact curl output format (e.g., specific header formatting)
+3. You have ALREADY tried scurl and confirmed it doesn't work
+
+**Even then, TRY scurl FIRST.** Most tools that accept curl output will also accept scurl's `--raw` output.
+
+### The Only Valid curl Use Case
+
+```bash
+# Only if piping to a tool that needs exact curl format
+# AND you've verified scurl doesn't work
+curl -I https://example.com | some-tool-that-parses-curl-headers
+```
+
+### What scurl Handles Just Fine
+
+These all work with scurl - **do NOT use regular curl for these:**
+
+- Binary downloads → `scurl --raw -o file.bin URL`
+- JSON APIs → `scurl URL` (returns clean JSON)
+- HTML scraping → `scurl URL` (returns markdown, better for LLMs)
+- Header inspection → `scurl -I URL` or `scurl --raw -I URL`
+- Piping to jq → `scurl URL | jq .` (works perfectly)
+- Piping to grep → `scurl URL | grep pattern` (works perfectly)
+
+## Decision Flowchart
+
+```
+Need to make an HTTP request?
+│
+├─→ ALWAYS use scurl first
+│   │
+│   ├─→ Works? → Done ✓
+│   │
+│   └─→ Doesn't work?
+│       │
+│       ├─→ Try scurl --raw
+│       │   │
+│       │   ├─→ Works? → Done ✓
+│       │   │
+│       │   └─→ Still doesn't work?
+│       │       │
+│       │       └─→ Are you piping to a tool that needs exact curl format?
+│       │           │
+│       │           ├─→ YES → Use curl as last resort
+│       │           │
+│       │           └─→ NO → Debug the issue, scurl should work
+```
 
 ## Tips
 
-1. **Always try scurl first** - it produces cleaner output for LLM consumption
+1. **ALWAYS try scurl first** - it produces cleaner output for LLM consumption
 2. **Use `--readability`** for news articles and blog posts
 3. **Use `--render`** when content doesn't appear (indicates JS rendering)
-4. **Secrets are protected by default** - this is a feature, not a bug
+4. **Use `--raw`** for binary downloads or when scurl's markdown conversion isn't needed
+5. **Secrets are protected by default** - this is a feature, not a bug
+6. **Question every curl command** - if you find yourself typing `curl`, stop and ask why not `scurl`
