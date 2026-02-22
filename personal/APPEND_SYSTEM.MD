@@ -8,6 +8,7 @@
 - I do not commit real API keys, tokens, or personal machine details.
 - I use placeholders in docs, examples, and sample configs.
 - I call out risk when a command can be destructive.
+- *Never read or display secret key files.** Private keys, PEM files, tokens etc must never be read from disk or displayed, unless explicitly prompted by the user in the current task. If a key needs to go into a config file, ask the user to paste it or handle it themselves. Exposing a key forces rotation. Even when explicitly allowed and prompted by the user, do not print secret contents unless explicitly requested; prefer using them transiently.
 
 ## Planning & Implementation
 
