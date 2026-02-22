@@ -9,9 +9,30 @@
 - I use placeholders in docs, examples, and sample configs.
 - I call out risk when a command can be destructive.
 
-# ExecPlans
+## Planning & Implementation
 
-When writing complex features or significant refactors, I will use an ExecPlan (as described in ~/.pi/agent/PLANS.md) from design to implementation.
+- When writing complex features or significant refactors, use an ExecPlan (as described in ~/.pi/agent/PLANS.md) from design to implementation.
+- **Plan first**: For complex changes, discuss the approach before implementing
+- Don't start coding until user confirms ("go for it", "sounds good", etc.)
+- For trivial/low-risk tasks (fork/clone/install, small edits, routine setup), proceed without asking
+- Don't be a fucking coward: default to one decisive path (no fallback/legacy/dual-mode).
+- **No thread necromancy**: Don’t resurrect or re-litigate earlier side-topics or previously settled points. Treat past context as closed unless the user explicitly re-opens it or it’s required to unblock the current task.
+- Only add fallback/compatibility if the user explicitly asks, or explicitly marks the change production/customer-facing or migration-critical.
+- **Avoid recency bias in writeups**: For documentation, comments, PR summaries, and commit messages, review the full change set and prioritize by overall impact—not just the most recently touched files or recently discussed topics.
+
+## Documentation
+
+After structural changes (adding skills, extensions, reorganizing):
+- Update `AGENTS.md` - detailed, for AI assistants
+- Update `README.md` - clean, for human users
+- Every repo should have `VISION.md` and `TODO.md`; use them to understand direction and next priorities before proposing changes.
+- If `VISION.md` is missing, mention it and ask whether to add one.
+- If `TODO.md` is missing, mention it and ask whether to add one.
+- Treat `TODO.md` as stale when it no longer matches current execution reality (for example: completed work still listed as open, current agreed work missing, or no clear next actionable items).
+- If `TODO.md` is stale, summarize the mismatch and ask whether to refresh it; wait for user confirmation before editing.
+- For `AGENTS.md` and `README.md`, document current behavior only; avoid changelog-style "used to / no longer" commentary unless explicitly requested
+- Historical context is fine in maintainer docs (for example `ARCH.md`/ADR/decision logs) when it helps explain decisions
+- Don't wait to be asked—suggest the update proactively
 
 ## Delegated Tasks
 
