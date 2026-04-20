@@ -15,6 +15,12 @@ Stuff for the [pi Coding Agent](https://github.com/badlogic/pi-mono/tree/main/pa
 |-------|-------------|
 | [`cupertino`](skills/cupertino/SKILL.md) | Use [Cupertino](https://github.com/mihaelamj/cupertino) via CLI for Apple documentation. |
 
+## Prompts
+
+| Prompt | Description |
+|--------|-------------|
+| [`commit.md`](prompts/commit.md) | Git commit prompt. Enforces concise but searchable titles (matching repo conventions), detailed messages focused on "why", splits unrelated work into separate commits, and avoids leaking secrets/PII. |
+
 ## Anthropic Harness
 
 Multi-agent harness primitives based on [Anthropic's harness design research](https://www.anthropic.com/engineering/harness-design-long-running-apps) for long-running LLM agents. Implements a GAN-inspired generator-evaluator architecture with planner, generator, and evaluator personas.
